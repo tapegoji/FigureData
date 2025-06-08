@@ -1,0 +1,7 @@
+train: train 
+val: validation 
+test: validation 
+
+# Classes
+nc: 1
+names: ['diagram']
