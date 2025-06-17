@@ -12,7 +12,7 @@ __author__ = "innovoltive"
 __email__ = "info@innovoltive.com"
 __description__ = "A YOLOv5-based figure detection system for document images"
 
-from .detect import FigureDetector
+from .figure_detector import FigureDetector
 
 __all__ = [
     "FigureDetector",
