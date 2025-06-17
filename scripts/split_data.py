@@ -8,7 +8,7 @@ import shutil
 import random
 from pathlib import Path
 
-def split_data(data_dir, train_dir, val_dir, train_ratio=0.8):
+def split_data(data_dir, train_dir, val_dir, train_ratio=0.7):
     """
     Split data into training and validation sets
     
@@ -72,9 +72,9 @@ def split_data(data_dir, train_dir, val_dir, train_ratio=0.8):
 
 if __name__ == "__main__":
     # Define paths
-    data_dir = "/home/asepahvand/repos/FigureData/data"
-    train_dir = "/home/asepahvand/repos/FigureData/figure_dataset/train"
-    val_dir = "/home/asepahvand/repos/FigureData/figure_dataset/validation"
-    
-    # Split the data (80% train, 20% validation)
-    split_data(data_dir, train_dir, val_dir, train_ratio=0.8)
+    data_dir = "/home/asepahvand/repos/FigureData/dataset/data"
+    train_dir = "/home/asepahvand/repos/FigureData/dataset/train"
+    val_dir = "/home/asepahvand/repos/FigureData/dataset/validation"
+
+    # Split the data (70% train, 30% validation)
+    split_data(data_dir, train_dir, val_dir, train_ratio=0.7)
