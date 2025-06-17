@@ -5,13 +5,31 @@ A YOLO11-based figure detection system that can automatically identify and extra
 ## Project Structure
 
 ```
-figuredetect/
-├── detect/                     # Main detection modules
-│   ├── train_figure.py        # Training script
-│   └── detect_figure.py       # Detection script
-├── logs/                      # Training and detection logs
-├── output/                    # Detection results and visualizations
-├── download_models.py         # Script to download all YOLO11 models
+FigureData/
+├── detector/                   # Main detection modules
+│   ├── __init__.py
+│   ├── tra### Recent Updates
+
+### Latest Implementation
+- **Complete YOLO11 Integration**: Uses YOLO11 architecture exclusively
+- **Streamlined Workflow**: Simple 3-step process (split → train → detect)
+- **Dual Dataset Support**: Handles multiple datasets in `dataset/data/` and `dataset/old_data/`
+- **Automated Data Splitting**: Smart train/validation splitting with `scripts/split_data.py`
+- **Enhanced Training**: Simplified training script with comprehensive logging
+- **Improved Detection**: Robust figure detection with visualization and cropping
+- **Better Organization**: Clear project structure with dedicated directories for each component_detector.py  # Training script
+│   └── figure_detector.py     # Detection script
+├── scripts/                   # Utility scripts
+│   ├── __init__.py
+│   ├── split_data.py          # Data splitting script
+│   ├── download_models.py     # Script to download YOLO11 models
+│   └── test_gpu.py           # GPU testing utility
+├── dataset/                   # Training dataset
+│   ├── data.yaml             # Dataset configuration
+│   ├── data/                 # Raw images and labels (all data)
+│   ├── old_data/             # Backup of old data
+│   ├── train/                # Training images and labels (after split)
+│   └── validation/           # Validation images and labels (after split)
 ├── models/                    # Model files
 │   ├── yolo11n.pt            # YOLO11 Nano (2.6M params, fastest)
 │   ├── yolo11s.pt            # YOLO11 Small (9.4M params, balanced)
@@ -20,28 +38,67 @@ figuredetect/
 │   ├── yolo11x.pt            # YOLO11 Extra Large (56.9M params, best)
 │   ├── best.pt               # Best trained model (after training)
 │   └── train/                # Training run outputs
-├── figure_dataset/            # Training dataset
-│   ├── data.yaml             # Dataset configuration
-│   ├── train/                # Training images and labels
-│   └── validation/           # Validation images and labels
-├── data/                     # Sample test data
-└── requirements.txt          # Python dependencies
+├── input_images/              # Sample input images for testing
+├── output/                    # Detection results and visualizations
+├── logs/                      # Training and detection logs
+├── yolo11n.pt                # Base YOLO11 model in root
+├── pyproject.toml            # Project configuration
+├── requirements.txt          # Python dependencies
+└── README.md                 # This file
 ```
 
-## Features
+## Quick Start Guide
 
-- **Training**: Train custom YOLO11 models for figure detection using the latest architecture
-- **Detection**: Detect figures in images with confidence scores
-- **Visualization**: Generate annotated images showing detected figures
-- **Extraction**: Save individual detected figures as separate image files
-- **Logging**: Comprehensive logging for both training and detection processes
+Follow these 3 simple steps to get started with figure detection:
+
+### Step 1: Split the Dataset
+
+First, split your data from the `dataset/data` folder into training and validation sets:
+
+```bash
+python scripts/split_data.py
+```
+
+This will:
+- Split your data into 70% training and 30% validation sets
+- Create `dataset/train/` and `dataset/validation/` directories
+- Copy images to `images/` subdirectories and labels to `labels/` subdirectories
+- Use the existing data in `dataset/data/` and `dataset/old_data/`
+
+### Step 2: Train the Model
+
+Train a YOLO11 model using your split dataset:
+
+```bash
+python detector/train_figure_detector.py
+```
+
+This will:
+- Train a YOLO11n model for 100 epochs (default)
+- Save training logs to `logs/training_YYYYMMDD_HHMMSS.log`
+- Save the best model to `models/best.pt`
+- Create detailed training outputs in `models/train/`
+
+### Step 3: Run Figure Detection
+
+Detect figures in your images:
+
+```bash
+python detector/figure_detector.py
+```
+
+This will:
+- Use the trained model (`models/best.pt`) to detect figures
+- Save detection results to `output/` directory
+- Generate annotated visualizations and individual figure crops
+- Create detection logs in `logs/detection_YYYYMMDD_HHMMSS.log`
 
 ## Installation
 
 1. Clone the repository:
 ```bash
 git clone <repository-url>
-cd figuredetect
+cd FigureData
 ```
 
 2. Create and activate virtual environment:
@@ -57,45 +114,59 @@ pip install -r requirements.txt
 
 4. Download YOLO11 models (optional - models auto-download when needed):
 ```bash
-python download_models.py
+python scripts/download_models.py
 ```
 This will download all YOLO11 variants (n, s, m, l, x) to the `models/` directory.
 
-## Usage
+## Detailed Usage
+
+### Data Preparation
+
+The project includes two datasets in the `dataset/` folder:
+- `dataset/data/` - Main dataset with images and annotations
+- `dataset/old_data/` - Additional or backup dataset
+
+Before training, you need to split your data:
+
+```bash
+python scripts/split_data.py
+```
+
+**Split Configuration:**
+- Training ratio: 70% (modifiable in the script)
+- Validation ratio: 30%
+- Output: Creates `dataset/train/` and `dataset/validation/` with proper YOLO structure
 
 ### Training a Model
 
 To train a custom figure detection model:
 
 ```bash
-cd detect
-python train_figure.py
+python detector/train_figure_detector.py
 ```
 
-**Training Parameters** (can be modified in the script):
-- `model_name`: Path to YOLO11 model (default: "../models/yolo11n.pt")
-- `data_config`: Path to dataset config (default: "../figure_dataset/data.yaml") 
+**Training Parameters** (modifiable in the script):
+- `model_name`: Path to YOLO11 model (default: "models/yolo11n.pt")
+- `data_config`: Path to dataset config (default: "dataset/data.yaml") 
 - `epochs`: Number of training epochs (default: 100)
 - `batch_size`: Training batch size (default: 16)
 - `img_size`: Input image size (default: 640)
 
-**Training with Different YOLO11 Models**:
+**Training with Different YOLO11 Models:**
+Edit the script to use different model sizes:
 ```python
-# In Python
-from detect.train_figure import train_with_model_size
-
-# Train with different model sizes
-train_with_model_size("n", epochs=50)   # YOLO11n - fastest
-train_with_model_size("s", epochs=75)   # YOLO11s - balanced
-train_with_model_size("m", epochs=100)  # YOLO11m - higher accuracy
-train_with_model_size("l", epochs=150)  # YOLO11l - even better
-train_with_model_size("x", epochs=200)  # YOLO11x - best accuracy
+# In train_figure_detector.py main section:
+train_model("models/yolo11n.pt", epochs=100)  # YOLO11n - fastest
+train_model("models/yolo11s.pt", epochs=120)  # YOLO11s - balanced
+train_model("models/yolo11m.pt", epochs=100)  # YOLO11m - higher accuracy
+train_model("models/yolo11l.pt", epochs=80)   # YOLO11l - even better
+train_model("models/yolo11x.pt", epochs=60)   # YOLO11x - best accuracy
 ```
 
 **Training Output:**
 - Trained model saved to `models/train/run_YYYYMMDD_HHMMSS/`
 - Best model automatically copied to `models/best.pt`
-- Training logs saved to `detect/logs/training_YYYYMMDD_HHMMSS.log`
+- Training logs saved to `logs/training_YYYYMMDD_HHMMSS.log`
 - Training metrics and plots generated
 
 ### Running Detection
@@ -103,53 +174,20 @@ train_with_model_size("x", epochs=200)  # YOLO11x - best accuracy
 To detect figures in images:
 
 ```bash
-cd detect
-python detect_figure.py
+python detector/figure_detector.py
 ```
 
-**Detection Parameters** (can be modified in the script):
-- `image_path`: Path to input image
-- `model_path`: Path to YOLO11 model (auto-detects best available)
-- `output_dir`: Output directory for results (default: "output")
-- `conf_threshold`: Confidence threshold for detections (default: 0.25)
-
-**Detection with Different YOLO11 Models**:
-```python
-# In Python
-from detect.detect_figure import detect_with_model_size
-
-# Detect with different model sizes
-results = detect_with_model_size("image.jpg", "n")  # YOLO11n - fastest
-results = detect_with_model_size("image.jpg", "m")  # YOLO11m - balanced
-results = detect_with_model_size("image.jpg", "x")  # YOLO11x - best accuracy
-```
+**Detection Features:**
+- Uses the best trained model (`models/best.pt`)
+- Processes images from `input_images/` directory
+- Configurable confidence threshold (default: 0.25)
+- Saves results to `output/` directory
 
 **Detection Output:**
-- Annotated visualization: `output/detection_results.png`
-- Individual figure crops: `output/figures/figure_N_conf_X.XXX.png`
-- Detection logs: `detect/logs/detection_YYYYMMDD_HHMMSS.log`
-
-### Using as Library
-
-You can also import and use the detection functions in your own code:
-
-```python
-from detect.detect_figure import detect_figures, detect_with_model_size
-from detect.train_figure import train_with_model_size
-
-# Detect figures in an image (auto-selects best available YOLO11 model)
-results = detect_figures("path/to/image.png", output_dir="my_output")
-
-# Or specify a particular YOLO11 model
-results = detect_with_model_size("path/to/image.png", "m", "my_output")
-
-# Train with specific YOLO11 model
-train_results = train_with_model_size("l", epochs=100)
-
-print(f"Found {results['count']} figures")
-print(f"Visualization: {results['visualization']}")
-print(f"Figure files: {results['figures']}")
-```
+- Annotated visualization with bounding boxes
+- Individual figure crops saved as separate images
+- Detection logs with confidence scores and coordinates
+- Results organized by input image name
 
 ## Model Information
 
@@ -181,17 +219,55 @@ After training, you can expect:
 
 ## Dataset Format
 
-The training dataset should follow YOLO format:
+The training dataset follows YOLO format and includes:
+
+### Data Structure
+```
+dataset/
+├── data.yaml              # Dataset configuration file
+├── data/                  # Raw dataset (all images and labels)
+│   ├── *.jpg             # Image files
+│   └── *.txt             # Corresponding label files
+├── old_data/             # Additional/backup dataset
+├── train/                # Training set (created by split_data.py)
+│   ├── images/           # Training images
+│   └── labels/           # Training labels
+└── validation/           # Validation set (created by split_data.py)
+    ├── images/           # Validation images
+    └── labels/           # Validation labels
+```
+
+### Label Format
 - Images in JPG/PNG format
 - Labels in TXT format (one per image)
 - Label format: `class_id x_center y_center width height` (normalized 0-1)
-- `data.yaml` configuration file specifying paths and classes
+- Current dataset has 1 class: `diagram` (class_id = 0)
+
+### Dataset Configuration (data.yaml)
+```yaml
+train: train/images
+val: validation/images
+test: validation/images
+
+# Classes
+nc: 1
+names: ['diagram']
+```
+
+## Features
+
+- **Data Splitting**: Automatically split datasets into training/validation sets
+- **Training**: Train custom YOLO11 models for figure detection using the latest architecture
+- **Detection**: Detect figures in images with confidence scores
+- **Visualization**: Generate annotated images showing detected figures
+- **Extraction**: Save individual detected figures as separate image files
+- **Logging**: Comprehensive logging for all operations
 
 ## Logging
 
 All operations are logged with timestamps:
-- **Training logs**: `detect/logs/training_YYYYMMDD_HHMMSS.log`
-- **Detection logs**: `detect/logs/detection_YYYYMMDD_HHMMSS.log`
+- **Training logs**: `logs/training_YYYYMMDD_HHMMSS.log`
+- **Detection logs**: `logs/detection_YYYYMMDD_HHMMSS.log`
 
 Logs include:
 - Process start/end times
@@ -203,14 +279,35 @@ Logs include:
 ## Performance
 
 ### Training Performance
-- Training time: ~1-2 minutes for 10 epochs (GPU recommended)
-- Memory usage: ~2GB GPU memory
-- Dataset: 280 training images, 60 validation images
+- Training time: Varies by model size and epochs
+- Memory usage: ~2GB GPU memory (recommended)
+- Dataset: Split from combined datasets in `dataset/data/` and `dataset/old_data/`
 
 ### Detection Performance
 - Inference speed: ~1-2ms per image (GPU)
-- Accuracy: >95% mAP50 on validation set
-- Confidence scores: Typically 90%+ for clear figures
+- Confidence scores: Configurable threshold (default: 0.25)
+- Supports batch processing of images
+
+## Complete Workflow Example
+
+Here's a complete example of the typical workflow:
+
+```bash
+# 1. Split your dataset
+python scripts/split_data.py
+
+# 2. Train the model
+python detector/train_figure_detector.py
+
+# 3. Run detection on your images
+python detector/figure_detector.py
+```
+
+**Expected Output:**
+- Split datasets in `dataset/train/` and `dataset/validation/`
+- Trained model saved as `models/best.pt`
+- Detection results in `output/` directory
+- Comprehensive logs in `logs/` directory
 
 ## Troubleshooting
 
@@ -251,4 +348,4 @@ Logs include:
 
 ---
 
-For questions or issues, please check the logs in `detect/logs/` first, then create an issue in the repository. 
+For questions or issues, please check the logs in `logs/` directory first, then create an issue in the repository. 
