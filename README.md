@@ -29,7 +29,7 @@ FigureData/
 │   ├── data/                 # Raw images and labels (all data)
 │   ├── old_data/             # Backup of old data
 │   ├── train/                # Training images and labels (after split)
-│   └── validation/           # Validation images and labels (after split)
+│   └── val/                  # Validation images and labels (after split)
 ├── models/                    # Model files
 │   ├── yolo11n.pt            # YOLO11 Nano (2.6M params, fastest)
 │   ├── yolo11s.pt            # YOLO11 Small (9.4M params, balanced)
@@ -61,7 +61,7 @@ python scripts/split_data.py
 
 This will:
 - Split your data into 70% training and 30% validation sets
-- Create `dataset/train/` and `dataset/validation/` directories
+- Create `dataset/train/` and `dataset/val/` directories
 - Copy images to `images/` subdirectories and labels to `labels/` subdirectories
 - Use the existing data in `dataset/data/` and `dataset/old_data/`
 
@@ -135,7 +135,7 @@ python scripts/split_data.py
 **Split Configuration:**
 - Training ratio: 70% (modifiable in the script)
 - Validation ratio: 30%
-- Output: Creates `dataset/train/` and `dataset/validation/` with proper YOLO structure
+- Output: Creates `dataset/train/` and `dataset/val/` with proper YOLO structure
 
 ### Training a Model
 
@@ -232,7 +232,7 @@ dataset/
 ├── train/                # Training set (created by split_data.py)
 │   ├── images/           # Training images
 │   └── labels/           # Training labels
-└── validation/           # Validation set (created by split_data.py)
+└── val/                  # Validation set (created by split_data.py)
     ├── images/           # Validation images
     └── labels/           # Validation labels
 ```
@@ -246,8 +246,8 @@ dataset/
 ### Dataset Configuration (data.yaml)
 ```yaml
 train: train/images
-val: validation/images
-test: validation/images
+val: val/images
+test: val/images
 
 # Classes
 nc: 1
@@ -304,7 +304,7 @@ python detector/figure_detector.py
 ```
 
 **Expected Output:**
-- Split datasets in `dataset/train/` and `dataset/validation/`
+- Split datasets in `dataset/train/` and `dataset/val/`
 - Trained model saved as `models/best.pt`
 - Detection results in `output/` directory
 - Comprehensive logs in `logs/` directory

@@ -163,7 +163,7 @@ class FigureDetector:
 if __name__ == "__main__":
     # Test with sample image or folder
     image_path = "input_images/Wolfspeed_C3M0032120K_data_sheet/"
-    model_path = f"models/best_old.pt"
+    model_path = f"models/best.pt"
     conf_threshold = 0.7  # Confidence threshold for detection
 
     # Initialize detector

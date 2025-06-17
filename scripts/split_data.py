@@ -74,7 +74,7 @@ if __name__ == "__main__":
     # Define paths
     data_dir = "/home/asepahvand/repos/FigureData/dataset/data"
     train_dir = "/home/asepahvand/repos/FigureData/dataset/train"
-    val_dir = "/home/asepahvand/repos/FigureData/dataset/validation"
+    val_dir = "/home/asepahvand/repos/FigureData/dataset/val"
     
     # Remove existing directories if they exist
     for directory in [train_dir, val_dir]:

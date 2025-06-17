@@ -10,11 +10,12 @@ __pycache__/
 *.pyzwz
 *.pyzwzw
 *.egg-info/
-data/
-output/
-.DS_Store
-.vscode/
 *.log
 *.cache
+.vscode/
+
 models/train/*
+dataset/train/*
+dataset/val/*
 yolo*.pt
+output/*
