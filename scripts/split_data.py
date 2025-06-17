@@ -75,6 +75,13 @@ if __name__ == "__main__":
     data_dir = "/home/asepahvand/repos/FigureData/dataset/data"
     train_dir = "/home/asepahvand/repos/FigureData/dataset/train"
     val_dir = "/home/asepahvand/repos/FigureData/dataset/validation"
+    
+    # Remove existing directories if they exist
+    for directory in [train_dir, val_dir]:
+        dir_path = Path(directory)
+        if dir_path.exists():
+            print(f"Removing existing directory: {directory}")
+            shutil.rmtree(dir_path)
 
     # Split the data (70% train, 30% validation)
     split_data(data_dir, train_dir, val_dir, train_ratio=0.7)
