@@ -16,7 +16,7 @@ import matplotlib.patches as patches
 # Setup logging
 def setup_logging():
     # Create logs directory if it doesn't exist
-    logs_dir = Path("../logs")
+    logs_dir = Path("logs")
     logs_dir.mkdir(exist_ok=True)
     
     log_file = logs_dir / f"detection_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
@@ -59,7 +59,7 @@ class SimpleDetector:
             self.logger.error(f"Detection failed: {e}")
             return None
     
-    def visualize(self, results, image_path, output_path="../output/detection.png"):
+    def visualize(self, results, image_path, output_path="output/detection.png"):
         """Visualize detection results"""
         try:
             # Load image
@@ -102,7 +102,7 @@ class SimpleDetector:
             self.logger.error(f"Visualization failed: {e}")
             return 0
     
-    def save_crops(self, results, image_path, output_dir="../output/figures"):
+    def save_crops(self, results, image_path, output_dir="output/figures"):
         """Save detected figures as individual images"""
         try:
             if results.boxes is None or len(results.boxes) == 0:
@@ -140,24 +140,24 @@ class SimpleDetector:
             self.logger.error(f"Cropping failed: {e}")
             return []
 
-def detect_figures(image_path, model_path=None, output_dir="../output"):
+def detect_figures(image_path, model_path=None, output_dir="output"):
     """Main detection function"""
     
     # Find model
     if model_path is None:
         # First check for best model in models root
-        best_model = Path("../models/best.pt")
+        best_model = Path("models/best.pt")
         if best_model.exists():
             model_path = best_model
         else:
             # Look for trained model in subdirectories
-            train_models = list(Path("../models/train").glob("*/weights/best.pt"))
+            train_models = list(Path("models/train").glob("*/weights/best.pt"))
             if train_models:
                 model_path = train_models[0]
             else:
                 # Try to find any YOLO11 model, prefer larger models for better accuracy
                 for model_size in ['x', 'l', 'm', 's', 'n']:
-                    yolo11_model = Path(f"../models/yolo11{model_size}.pt")
+                    yolo11_model = Path(f"models/yolo11{model_size}.pt")
                     if yolo11_model.exists():
                         model_path = yolo11_model
                         break
@@ -186,7 +186,7 @@ def detect_figures(image_path, model_path=None, output_dir="../output"):
         'figures': saved_files
     }
 
-def detect_with_model_size(image_path, model_size="n", output_dir="../output"):
+def detect_with_model_size(image_path, model_size="n", output_dir="output"):
     """
     Detect figures using specific YOLO11 model size
     
@@ -198,12 +198,12 @@ def detect_with_model_size(image_path, model_size="n", output_dir="../output"):
     Returns:
         Detection results dictionary
     """
-    model_path = f"../models/yolo11{model_size}.pt"
+    model_path = f"models/yolo11{model_size}.pt"
     return detect_figures(image_path, model_path=model_path, output_dir=output_dir)
 
 if __name__ == "__main__":
     # Test with sample image using best available model
-    image_path = "../data/Wolfspeed_C3M0016120K_data_sheet_page_images/page_4.png"
+    image_path = "data/Wolfspeed_C3M0032120K_data_sheet/page_5.png"
     results = detect_figures(image_path)
     
     if results:

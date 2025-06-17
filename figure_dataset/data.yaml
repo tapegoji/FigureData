@@ -1,6 +1,6 @@
-train: train 
-val: validation 
-test: validation 
+train: train/images
+val: validation/images
+test: validation/images
 
 # Classes
 nc: 1

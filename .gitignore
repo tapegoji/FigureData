@@ -17,3 +17,4 @@ output/
 *.log
 *.cache
 models/train/*
+yolo*.pt
