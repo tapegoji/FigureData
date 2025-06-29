@@ -97,10 +97,10 @@ def train_model(model_name="models/yolo11m.pt", data_config="dataset/data.yaml",
 if __name__ == "__main__":
     # Default training with YOLO11m
     # Uses existing model from models/ folder
-    train_model("models/yolo11n.pt", epochs=100)
+    # train_model("models/yolo11n.pt", epochs=100)
     
     # Examples for other models:
     # train_model("models/yolo11n.pt", epochs=150)  # YOLO11n
-    # train_model("models/yolo11s.pt", epochs=120)  # YOLO11s
+    train_model("models/yolo11s.pt", epochs=120)  # YOLO11s
     # train_model("models/yolo11l.pt", epochs=80)   # YOLO11l
     # train_model("models/yolo11x.pt", epochs=60)   # YOLO11x 
